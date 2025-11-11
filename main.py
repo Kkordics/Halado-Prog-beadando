@@ -93,47 +93,48 @@ def palya_rajz(palya_terv, palyaElemek, kar_x,kar_y):
 			elem_x = 0
 			for x in range(kar_x ,len(palya_terv[y])):
 				
-				
+				pos = (elem_x*mozgas,elem_y*mozgas)
+
 				match palya_terv[y][x]:
 					case '#':#Tégla
-						win.blit(palyaElemek["Brick_wall"], (elem_x*mozgas,elem_y*mozgas))
+						win.blit(palyaElemek["Brick_wall"], pos)
 							
 					case '@':
-						win.blit(palyaElemek["Brick_Wall_Cracked"], (elem_x*mozgas,elem_y*mozgas))
+						win.blit(palyaElemek["Brick_Wall_Cracked"], pos)
 					case 'H':
-						win.blit(palyaElemek["Wooden_Floor_Horizontal"], (elem_x*mozgas,elem_y*mozgas))
+						win.blit(palyaElemek["Wooden_Floor_Horizontal"], pos)
 					case '*':
-						win.blit(palyaElemek["Rocky_Road"], (elem_x*mozgas,elem_y*mozgas))
+						win.blit(palyaElemek["Rocky_Road"], pos)
 					case '.':
-						win.blit(palyaElemek["Dirt_Road"], (elem_x*mozgas,elem_y*mozgas))
+						win.blit(palyaElemek["Dirt_Road"], pos)
 					case 'W':
-						win.blit(palyaElemek["Water"], (elem_x*mozgas,elem_y*mozgas))
+						win.blit(palyaElemek["Water"], pos)
 					case 'G':
-						win.blit(palyaElemek["Grass"], (elem_x*mozgas,elem_y*mozgas))
+						win.blit(palyaElemek["Grass"], pos)
 					case '1':
-						win.blit(palyaElemek["Grass"], (elem_x*mozgas,elem_y*mozgas))
-						win.blit(palyaElemek["apple"], (elem_x*mozgas,elem_y*mozgas))
+						win.blit(palyaElemek["Grass"], pos)
+						win.blit(palyaElemek["apple"], pos)
 					case '2':
-						win.blit(palyaElemek["Grass"], (elem_x*mozgas,elem_y*mozgas))
-						win.blit(palyaElemek["cypress"], (elem_x*mozgas,elem_y*mozgas))
+						win.blit(palyaElemek["Grass"], pos)
+						win.blit(palyaElemek["cypress"], pos)
 					case '3':
-						win.blit(palyaElemek["Grass"], (elem_x*mozgas,elem_y*mozgas))
-						win.blit(palyaElemek["dead tree"], (elem_x*mozgas,elem_y*mozgas))
+						win.blit(palyaElemek["Grass"], pos)
+						win.blit(palyaElemek["dead tree"], pos)
 					case '4':
-						win.blit(palyaElemek["Grass"], (elem_x*mozgas,elem_y*mozgas))
-						win.blit(palyaElemek["mangrove"], (elem_x*mozgas,elem_y*mozgas))
+						win.blit(palyaElemek["Grass"], pos)
+						win.blit(palyaElemek["mangrove"], pos)
 					case '5':
-						win.blit(palyaElemek["Grass"], (elem_x*mozgas,elem_y*mozgas))
-						win.blit(palyaElemek["maple"], (elem_x*mozgas,elem_y*mozgas))
+						win.blit(palyaElemek["Grass"], pos)
+						win.blit(palyaElemek["maple"], pos)
 					case '6':
-						win.blit(palyaElemek["Grass"], (elem_x*mozgas,elem_y*mozgas))
-						win.blit(palyaElemek["pine"], (elem_x*mozgas,elem_y*mozgas))
+						win.blit(palyaElemek["Grass"], pos)
+						win.blit(palyaElemek["pine"], pos)
 					case '7':
-						win.blit(palyaElemek["Grass"], (elem_x*mozgas,elem_y*mozgas))
-						win.blit(palyaElemek["sakura"], (elem_x*mozgas,elem_y*mozgas))
+						win.blit(palyaElemek["Grass"], pos)
+						win.blit(palyaElemek["sakura"], pos)
 					case '8':
-						win.blit(palyaElemek["Grass"], (elem_x*mozgas,elem_y*mozgas))
-						win.blit(palyaElemek["willow"], (elem_x*mozgas,elem_y*mozgas))
+						win.blit(palyaElemek["Grass"], pos)
+						win.blit(palyaElemek["willow"], pos)
 				elem_x +=1
 			elem_y +=1
 					
