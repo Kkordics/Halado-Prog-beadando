@@ -12,10 +12,11 @@ pygame.display.set_caption("Moving rectangle")
 kar_x = 0
 kar_y = 0
 
-gon_x = -8
-gon_y = -8
+gon_x = 8
+gon_y = 8
 
 elet = 4#maximum 4
+gon_elet = 5
 
 width = 20
 height = 20
@@ -163,14 +164,25 @@ def gonosz_ai():
 	global gon_y
 	
 	if(kar_x> gon_x):
-		gon_x+=1
+		gon_x+=0.1
 	if(kar_y>gon_y):
-		gon_y +=1
+		gon_y +=0.1
 
 	if(gon_x>kar_x):
-		gon_x-=1
+		gon_x-=0.1
 	if(gon_y>kar_y):
-		gon_y-=1
+		gon_y-=0.1
+
+def killhim():
+	global gon_elet
+	mx, my = pygame.mouse.get_pos()
+	dx = ((gon_x - kar_x) * 50) + 400
+	dy = ((gon_y - kar_y) * 50) + 400
+	if (mx < dx + 25 and mx > dx - 25) and (my < dy + 25 and my > dy - 25):
+		gon_elet -= 1
+		print("bumm hes deads")
+	else:
+		print("krasne ráno")
 	
 def etel_generalas(palya, le_etelek, etel_kepek):
 	x = random.randrange(0, len(palya[0]))
@@ -191,7 +203,7 @@ def gonosz_mozgatas(kar_x, kar_y, gonosz_x, gonosz_y):
 	x = ((gonosz_x+8)-kar_x)*mozgas
 	y = ((gonosz_y+8)-kar_y)*mozgas
 	
-	return (x,y)
+	return (x-50,y-50)
 
 
 def kaja_teszt(kar_x,kar_y, le_etelk):
@@ -221,6 +233,8 @@ lerakott_etelek =[]
 
 gonosz_time = time.time()
 
+hp_time = time.time()
+
 etel_ido = time.time()
 
 while run: 
@@ -229,6 +243,11 @@ while run:
 	for event in pygame.event.get(): 
 		if event.type == pygame.QUIT: 
 			run = False
+
+		if event.type == pygame.MOUSEBUTTONDOWN:
+			if pygame.mouse.get_pressed()[0]:
+				killhim()
+
 	keys = pygame.key.get_pressed() 
 	
 	if((time.time()-start_ido) >0.1):
@@ -249,13 +268,18 @@ while run:
 		start_ido = time.time()
 	
 		
-	if((time.time()-gonosz_time)>0.5):
+	if((time.time()-gonosz_time)>0.05):
 		gonosz_ai()
 		gonosz_time = time.time()
 		
-		if(kar_x == gon_x and kar_y == gon_y):
-			elet = max(0, elet-1)
+		#print("dx: ",dx,"  dy: ",dy, "    mx:",mx, " my: ",my)
+		print("dx: ",kar_x,"  dy: ",kar_y)
     
+	if((time.time()-hp_time)>0.5):
+		hp_time = time.time()
+		if(kar_x < gon_x + 1 and kar_x > gon_x - 1) and (kar_y < gon_y + 1 and kar_y > gon_y - 1):
+			elet = max(0, elet-1)
+
 	if((time.time()-etel_ido)>2):
 		etel_generalas(palya, lerakott_etelek, etelek)
 		etel_ido = time.time()
@@ -264,10 +288,11 @@ while run:
 	
 	
 	palya_rajz(palya, palya_elemk,kar_x,kar_y)
-	karakter_rajz((400-20,400-42), karakterk[0])
+	karakter_rajz((400 - 50,400 - 50), karakterk[0])
 
 	#gonosz
-	karakter_rajz(gonosz_mozgatas(kar_x, kar_y, gon_x, gon_y), karakterk[19])
+	if gon_elet > 1:
+		karakter_rajz(gonosz_mozgatas(kar_x, kar_y, gon_x, gon_y), karakterk[19])
 
 
 	#etelek
