@@ -2,6 +2,8 @@ import pygame
 import time
 import os
 import random
+import pickle
+import pandas as pd
 pygame.init() 
 
 
@@ -26,6 +28,9 @@ run = True
 
 start_ido = time.time()
 
+
+with open('gonosz_ai_model.pkl', 'rb') as file:
+    ai_model = pickle.load(file)
 
 
 def karakter_rajz(pos, kari):
@@ -80,6 +85,8 @@ def palya_terv_betoltese(path):
 					vonal.append(char)
 				palya.append(vonal)
 	
+	
+
 	return palya
 
 def palya_rajz(palya_terv, palyaElemek, kar_x,kar_y):
@@ -158,20 +165,53 @@ def elet_rajz(kep):
 		else:
 			win.blit(kep[1], (i*32,0))
 
+def gon_elet_rajz(kep):
+	for i in range(0,5):
+		if(i<gon_elet):
+			win.blit(kep[2], ( 800-(i*32),0))
+		else:
+			win.blit(kep[1], (800-(i*32),0))
 
 def gonosz_ai():
-	global gon_x
-	global gon_y
-	
-	if(kar_x> gon_x):
-		gon_x+=0.1
-	if(kar_y>gon_y):
-		gon_y +=0.1
+	global gon_x, gon_y
 
-	if(gon_x>kar_x):
-		gon_x-=0.1
-	if(gon_y>kar_y):
-		gon_y-=0.1
+    
+	mouse_x_screen, mouse_y_screen = pygame.mouse.get_pos()
+    
+    # Átszámítás játék-koordinátákra
+    # A képernyő közepe (400, 400) a játékos helye.
+    # A gonosz képernyőpozíciója: ((gon_x - kar_x) * mozgas) + 400
+
+
+	mouse_x_game = gon_x + (mouse_x_screen - 400) / mozgas
+	mouse_y_game = gon_y + (mouse_y_screen - 400) / mozgas
+	#mouse_x_game = (mouse_x_screen-((gon_x+8)-kar_x)*mozgas)
+	#mouse_y_game = (mouse_y_screen-((gon_y+8)-kar_y)*mozgas )
+
+	#print(mouse_x_game, mouse_y_game)
+
+   
+	játékos_dx = kar_x - gon_x
+	játékos_dy = kar_y - gon_y
+	egér_dx = mouse_x_game - gon_x
+	egér_dy = mouse_y_game - gon_y
+    
+	bemenet = [[játékos_dx, játékos_dy, egér_dx, egér_dy]]
+	teszt = pd.DataFrame(bemenet, columns=['jatekos_dx', 'jatekos_dy', 'eger_dx', 'eger_dy'])
+
+   
+	josolt_lepes = ai_model.predict(teszt)[0]
+
+    
+	sebesseg = 0.5 # A gonosz sebessége
+	if josolt_lepes == 0: # Fel
+		gon_y -= sebesseg
+	elif josolt_lepes == 1: # Le
+		gon_y += sebesseg
+	elif josolt_lepes == 2: # Balra
+		gon_x -= sebesseg
+	elif josolt_lepes == 3: # Jobbra
+		gon_x += sebesseg
 
 def killhim():
 	global gon_elet
@@ -224,8 +264,8 @@ def kaja_teszt(kar_x,kar_y, le_etelk):
 #kepek meg pálya betöltése
 karakterk = karakterek_betoltese("kepek/karakterek.png")
 palya_elemk = palya_elemk_betoltese("kepek/palya")
-palya = palya_terv_betoltese("palya.txt")
-elet_kep = [pygame.image.load("kepek/sziv.png").convert_alpha(),pygame.image.load("kepek/ures_sziv.png").convert_alpha()]
+palya = palya_terv_betoltese("palya2.txt")
+elet_kep = [pygame.image.load("kepek/sziv.png").convert_alpha(),pygame.image.load("kepek/ures_sziv.png").convert_alpha(),pygame.image.load("kepek/gon_sziv.png").convert_alpha()]
 
 etelek = etelek_betoltese("kepek/etelek")
 
@@ -273,7 +313,7 @@ while run:
 		gonosz_time = time.time()
 		
 		#print("dx: ",dx,"  dy: ",dy, "    mx:",mx, " my: ",my)
-		print("dx: ",kar_x,"  dy: ",kar_y)
+		#print("dx: ",kar_x,"  dy: ",kar_y)
     
 	if((time.time()-hp_time)>0.5):
 		hp_time = time.time()
@@ -288,7 +328,7 @@ while run:
 	
 	
 	palya_rajz(palya, palya_elemk,kar_x,kar_y)
-	karakter_rajz((400 - 50,400 - 50), karakterk[0])
+	karakter_rajz((400 -50,400-50), karakterk[0])
 
 	#gonosz
 	if gon_elet > 1:
@@ -300,7 +340,7 @@ while run:
 
 	kaja_teszt(kar_x, kar_y, lerakott_etelek)
 	elet_rajz(elet_kep)
-
+	gon_elet_rajz(elet_kep)
 	
 	pygame.display.update() 
 
