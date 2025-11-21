@@ -4,9 +4,9 @@ import os
 import random
 import pickle
 import pandas as pd
+
+
 pygame.init() 
-
-
 
 win = pygame.display.set_mode((800, 800)) 
 pygame.display.set_caption("MI Beadandó") 
@@ -20,14 +20,16 @@ gon_y = 8
 elet = 4#maximum 4
 gon_elet = 5
 
-width = 20
-height = 20
-
 mozgas = 50
 run = True
 
-start_ido = time.time()
+bill_ido = time.time()
 
+gonosz_time = time.time()
+
+hp_time = time.time()
+
+etel_ido = time.time()
 
 with open('gonosz_ai_model.pkl', 'rb') as file:
     ai_model = pickle.load(file)
@@ -36,8 +38,6 @@ with open('gonosz_ai_model.pkl', 'rb') as file:
 def karakter_rajz(pos, kari):
 	win.blit(kari, pos)
     
-
-
 def karakterek_betoltese(path):
 	tabla = pygame.image.load(path).convert_alpha()
 	tabla_width, tabla_height = tabla.get_size()
@@ -79,21 +79,15 @@ def palya_terv_betoltese(path):
 	with open(path, 'r') as file:
 		for line in file:
 			
-			if(len(line)>=2 and line[0]+line[1] !="//"):
+			if(len(line)>2 and line[0]+line[1] !="//"):
 				vonal = []
 				for char in line:
 					vonal.append(char)
 				palya.append(vonal)
-	
-	
-
 	return palya
 
 def palya_rajz(palya_terv, palyaElemek, kar_x,kar_y):
 	if(len(palya_terv) > 0):
-		
-		
-
 		elem_x =0
 		elem_y = 0
 
@@ -146,7 +140,7 @@ def palya_rajz(palya_terv, palyaElemek, kar_x,kar_y):
 				elem_x +=1
 			elem_y +=1
 					
-def akadaj_teszt(palya_terv, kar_x, kar_y, akadaj):
+def akadaly_teszt(palya_terv, kar_x, kar_y, akadaj):
 	
 	x = kar_x+8
 	y = kar_y+8
@@ -175,34 +169,14 @@ def gon_elet_rajz(kep):
 def gonosz_ai():
 	global gon_x, gon_y
 
-    
-	mouse_x_screen, mouse_y_screen = pygame.mouse.get_pos()
-    
-    # Átszámítás játék-koordinátákra
-    # A képernyő közepe (400, 400) a játékos helye.
-    # A gonosz képernyőpozíciója: ((gon_x - kar_x) * mozgas) + 400
-
-
-	mouse_x_game = gon_x + (mouse_x_screen - 400) / mozgas
-	mouse_y_game = gon_y + (mouse_y_screen - 400) / mozgas
-	#mouse_x_game = (mouse_x_screen-((gon_x+8)-kar_x)*mozgas)
-	#mouse_y_game = (mouse_y_screen-((gon_y+8)-kar_y)*mozgas )
-
-	#print(mouse_x_game, mouse_y_game)
-
-   
 	játékos_dx = kar_x - gon_x
 	játékos_dy = kar_y - gon_y
-	egér_dx = mouse_x_game - gon_x
-	egér_dy = mouse_y_game - gon_y
     
 	bemenet = [[játékos_dx, játékos_dy]]
 	teszt = pd.DataFrame(bemenet, columns=['jatekos_dx', 'jatekos_dy'])
 
-   
 	josolt_lepes = ai_model.predict(teszt)[0]
 
-    
 	sebesseg = 0.5 # A gonosz sebessége
 	if josolt_lepes == 0: # Fel
 		gon_y -= sebesseg
@@ -245,7 +219,6 @@ def gonosz_mozgatas(kar_x, kar_y, gonosz_x, gonosz_y):
 	
 	return (x-50,y-50)
 
-
 def kaja_teszt(kar_x,kar_y, le_etelk):
 	rmv = None
 	global elet
@@ -260,7 +233,6 @@ def kaja_teszt(kar_x,kar_y, le_etelk):
 		le_etelk.remove(rmv)
 			
 
-
 #kepek meg pálya betöltése
 karakterk = karakterek_betoltese("kepek/karakterek.png")
 palya_elemk = palya_elemk_betoltese("kepek/palya")
@@ -271,11 +243,7 @@ etelek = etelek_betoltese("kepek/etelek")
 
 lerakott_etelek =[]
 
-gonosz_time = time.time()
 
-hp_time = time.time()
-
-etel_ido = time.time()
 
 while run: 
 	pygame.time.delay(10) 
@@ -290,30 +258,28 @@ while run:
 
 	keys = pygame.key.get_pressed() 
 	
-	if((time.time()-start_ido) >0.1):
+	if((time.time()-bill_ido) >0.1):
 		
-		if keys[pygame.K_a] and akadaj_teszt(palya, max(kar_x-1, 0), kar_y, '#'):
+		if keys[pygame.K_a] and akadaly_teszt(palya, max(kar_x-1, 0), kar_y, '#'):
 			kar_x -= 1
 			kar_x = max(kar_x, 0)
 
-		if keys[pygame.K_d]and akadaj_teszt(palya, max(kar_x+1, 0), kar_y, '#'):
+		if keys[pygame.K_d]and akadaly_teszt(palya, max(kar_x+1, 0), kar_y, '#'):
 			kar_x += 1 
             
-		if keys[pygame.K_w]and akadaj_teszt(palya, kar_x, max(kar_y-1, 0),'#'): 
+		if keys[pygame.K_w]and akadaly_teszt(palya, kar_x, max(kar_y-1, 0),'#'): 
 			kar_y -= 1 
 			kar_y = max(0, kar_y)
             
-		if keys[pygame.K_s]and akadaj_teszt(palya, kar_x, max(kar_y+1, 0),'#'):
+		if keys[pygame.K_s]and akadaly_teszt(palya, kar_x, max(kar_y+1, 0),'#'):
 			kar_y += 1
-		start_ido = time.time()
+		bill_ido = time.time()
 	
 		
 	if((time.time()-gonosz_time)>0.05):
 		gonosz_ai()
 		gonosz_time = time.time()
 		
-		#print("dx: ",dx,"  dy: ",dy, "    mx:",mx, " my: ",my)
-		#print("dx: ",kar_x,"  dy: ",kar_y)
     
 	if((time.time()-hp_time)>0.5):
 		hp_time = time.time()
@@ -324,9 +290,12 @@ while run:
 		etel_generalas(palya, lerakott_etelek, etelek)
 		etel_ido = time.time()
 	
-	win.fill((255, 255, 255)) 
-	
-	
+
+
+	 
+	kaja_teszt(kar_x, kar_y, lerakott_etelek)
+
+	win.fill((255, 255, 255))
 	palya_rajz(palya, palya_elemk,kar_x,kar_y)
 	karakter_rajz((400 -50,400-50), karakterk[0])
 
@@ -334,11 +303,10 @@ while run:
 	if gon_elet > 1:
 		karakter_rajz(gonosz_mozgatas(kar_x, kar_y, gon_x, gon_y), karakterk[19])
 
-
 	#etelek
 	etelek_rajz(lerakott_etelek, kar_x, kar_y)
 
-	kaja_teszt(kar_x, kar_y, lerakott_etelek)
+	
 	elet_rajz(elet_kep)
 	gon_elet_rajz(elet_kep)
 	
