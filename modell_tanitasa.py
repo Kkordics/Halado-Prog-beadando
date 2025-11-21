@@ -5,7 +5,7 @@ from sklearn.metrics import accuracy_score
 import pickle
 
 dataframe = pd.read_csv('adatok.csv')
-X = dataframe[['jatekos_dx', 'jatekos_dy', 'eger_dx', 'eger_dy']] # 4 bemenet
+X = dataframe[['jatekos_dx', 'jatekos_dy']] # 4 bemenet
 Y = dataframe['kimenet'] # Cél (0, 1, 2, vagy 3)
 
 # 2. Adatok szétválasztása

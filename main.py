@@ -196,8 +196,8 @@ def gonosz_ai():
 	egér_dx = mouse_x_game - gon_x
 	egér_dy = mouse_y_game - gon_y
     
-	bemenet = [[játékos_dx, játékos_dy, egér_dx, egér_dy]]
-	teszt = pd.DataFrame(bemenet, columns=['jatekos_dx', 'jatekos_dy', 'eger_dx', 'eger_dy'])
+	bemenet = [[játékos_dx, játékos_dy]]
+	teszt = pd.DataFrame(bemenet, columns=['jatekos_dx', 'jatekos_dy'])
 
    
 	josolt_lepes = ai_model.predict(teszt)[0]
