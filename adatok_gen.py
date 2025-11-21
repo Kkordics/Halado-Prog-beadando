@@ -13,15 +13,11 @@ def pontszam_kalkulator(gon_x, gon_y, kar_x, kar_y):
         3: (1, 0)   # Jobbra
     }
 
-    jatekus_suly = 1.5 # A játékos követése fontosabb
-    #eger_suly = 0 #1.0  # Az egér elkerülése kevésbé
-
     legjobb_lepes = -1
     legjobb_pontszam = -float('inf')
 
     eredeti_tav_jatekos = tavolsag(gon_x, gon_y, kar_x, kar_y)
    
-
     #legjobb lpés keresése
     for lepes, (dx, dy) in lepesek.items():
         uj_gon_x, uj_gon_y = gon_x + dx, gon_y + dy
@@ -29,13 +25,9 @@ def pontszam_kalkulator(gon_x, gon_y, kar_x, kar_y):
         # Játékos pontszám: A távolság csökkenése a jó
         uj_tav_jatekos = tavolsag(uj_gon_x, uj_gon_y, kar_x, kar_y)
         jatekos_pont = eredeti_tav_jatekos - uj_tav_jatekos
-
-      
-        # Végső pontszám súlyozással
-        vegso_pontszam = (jatekos_pont * jatekus_suly)
         
-        if vegso_pontszam > legjobb_pontszam:
-            legjobb_pontszam = vegso_pontszam
+        if jatekos_pont > legjobb_pontszam:
+            legjobb_pontszam = jatekos_pont
             legjobb_lepes = lepes
     return legjobb_lepes
 

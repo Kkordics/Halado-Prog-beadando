@@ -5,15 +5,14 @@ from sklearn.metrics import accuracy_score
 import pickle
 
 dataframe = pd.read_csv('adatok.csv')
-X = dataframe[['jatekos_dx', 'jatekos_dy']] # 4 bemenet
+X = dataframe[['jatekos_dx', 'jatekos_dy']]
 Y = dataframe['kimenet'] # Cél (0, 1, 2, vagy 3)
 
 # 2. Adatok szétválasztása
 X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
 
 # 3. Modell létrehozása és tanítása
-# Egy rejtett réteg 10 neuronnal. Kísérletezhetsz a számokkal!
-model = MLPClassifier(hidden_layer_sizes=(10,), max_iter=500, activation='relu', solver='adam')
+model = MLPClassifier(hidden_layer_sizes=(4,), max_iter=500, activation='relu', solver='adam')
 model.fit(X_train, y_train)
 
 # 4. Kiértékelés

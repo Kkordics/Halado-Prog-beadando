@@ -9,7 +9,7 @@ pygame.init()
 
 
 win = pygame.display.set_mode((800, 800)) 
-pygame.display.set_caption("Moving rectangle") 
+pygame.display.set_caption("MI Beadandó") 
 
 kar_x = 0
 kar_y = 0
