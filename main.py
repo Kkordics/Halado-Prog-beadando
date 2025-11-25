@@ -9,7 +9,7 @@ import pandas as pd
 pygame.init() 
 
 win = pygame.display.set_mode((800, 800)) 
-pygame.display.set_caption("MI Beadandó") 
+pygame.display.set_caption("Haladó prog beadandó") 
 
 kar_x = 0
 kar_y = 0
@@ -30,6 +30,12 @@ gonosz_time = time.time()
 hp_time = time.time()
 
 etel_ido = time.time()
+
+MY_TIMER_EVENT = pygame.USEREVENT + 1
+
+timer_started = False
+
+game_over_status = None
 
 with open('gonosz_ai_model.pkl', 'rb') as file:
     ai_model = pickle.load(file)
@@ -140,14 +146,14 @@ def palya_rajz(palya_terv, palyaElemek, kar_x,kar_y):
 				elem_x +=1
 			elem_y +=1
 					
-def akadaly_teszt(palya_terv, kar_x, kar_y, akadaj):
+def akadaly_teszt(palya_terv, kar_x, kar_y, akadaly):
 	
 	x = kar_x+8
 	y = kar_y+8
 
 	if(y < len(palya_terv)):
 		if(x < len(palya_terv[y])):
-			if(palya_terv[y][x] == akadaj):
+			if(palya_terv[y][x] == akadaly):
 				
 				return False
 	return True
@@ -252,6 +258,10 @@ while run:
 		if event.type == pygame.QUIT: 
 			run = False
 
+		if event.type == MY_TIMER_EVENT:
+			run = False
+			pygame.time.set_timer(MY_TIMER_EVENT, 0)
+
 		if event.type == pygame.MOUSEBUTTONDOWN:
 			if pygame.mouse.get_pressed()[0]:
 				killhim()
@@ -302,6 +312,28 @@ while run:
 	#gonosz
 	if gon_elet > 1:
 		karakter_rajz(gonosz_mozgatas(kar_x, kar_y, gon_x, gon_y), karakterk[19])
+
+
+	if elet == 0 and not timer_started:
+		game_over_status = "lose"
+		pygame.time.set_timer(MY_TIMER_EVENT, 3000)
+		timer_started = True
+
+		
+	if gon_elet == 0 and not timer_started:
+		game_over_status = "win"
+		pygame.time.set_timer(MY_TIMER_EVENT, 3000)
+		timer_started = True
+
+
+	if game_over_status == "lose":
+		youreloser = pygame.transform.scale(pygame.image.load("kepek/loser.jpeg"), (800,800))
+		win.blit(youreloser,(0,0))
+
+	if game_over_status == "win":
+		yourewinner = pygame.transform.scale(pygame.image.load("kepek/winner.jpeg"), (800,800))
+		win.blit(yourewinner,(0,0))
+
 
 	#etelek
 	etelek_rajz(lerakott_etelek, kar_x, kar_y)
